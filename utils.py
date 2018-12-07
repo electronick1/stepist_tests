@@ -18,7 +18,7 @@ def save_test_result(data):
 
 
 def get_test_result():
-    return redis_tests.get("test_result")
+    return ujson.loads(redis_tests.get("test_result"))
 
 
 def get_test_data_path():

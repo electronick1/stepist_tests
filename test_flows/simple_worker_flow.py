@@ -2,8 +2,11 @@ from collections import Counter
 from stepist import step
 
 from stepist.tests import utils
+from stepist import config
 
 STOP_WORDS = ['a', 'the', 'on', 'at']
+
+utils.setup_redis_tests(**config.redis_kwargs)
 
 
 @step(None, as_worker=True)
@@ -12,8 +15,8 @@ def save_to_redis(the):
 
 
 @step(save_to_redis)
-def return_amount_of_the(counter):
-    return dict(the=counter['the'])
+def return_amount_of_the(counts):
+    return dict(the=counts['the'])
 
 
 @step(return_amount_of_the, as_worker=True)
