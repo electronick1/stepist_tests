@@ -1,8 +1,17 @@
+import time
 import os
 import ujson
 import redis
 
 redis_tests = None
+
+
+def process_workers(app):
+    process_list = app.just_do_it(1, die_when_empty=True)
+    time.sleep(2)
+    for process in process_list:
+        process.terminate()
+        process.join()
 
 
 def setup_redis_tests(**redis_kwargs):
@@ -18,7 +27,13 @@ def save_test_result(data):
 
 
 def get_test_result():
-    return redis_tests.get("test_result")
+    global redis_tests
+
+    test_result = redis_tests.get("test_result")
+    if not test_result:
+        return None
+
+    return ujson.loads(test_result)
 
 
 def get_test_data_path():
